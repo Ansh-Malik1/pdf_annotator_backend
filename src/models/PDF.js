@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const pdfSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   uuid: { type: String, required: true, unique: true },
   originalName: { type: String, required: true },
   storedName: { type: String, required: true }, 

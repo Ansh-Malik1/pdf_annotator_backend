@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
 import pdfRoutes from "./routes/pdf.js"
+import highlightRoutes from "./routes/highlightRoutes.js"
 dotenv.config();
 connectDB();
 
@@ -16,6 +17,5 @@ app.get("/", (req, res) => {
 });
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard",pdfRoutes);
-
-
+app.use("/api/highlights", highlightRoutes);
 export default app;

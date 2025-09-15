@@ -5,7 +5,7 @@ export const upload_pdf= async (req,res)=>{
     if (!file) return res.status(400).json({ message: 'No file uploaded' });
 
     const pdfRecord = new PDF({
-      user: req.user.id,
+      userId: req.user.id,
       uuid: file.filename.split('.')[0], 
       originalName: file.originalname,
       storedName: file.filename,
