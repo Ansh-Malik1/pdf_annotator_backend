@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
+import pdfRoutes from "./routes/pdf.js"
 dotenv.config();
 connectDB();
 
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
   res.send("Backend is working ");
 });
 app.use("/api/auth", authRoutes);
+app.use("/api/dashboard",pdfRoutes);
 
 
 export default app;
