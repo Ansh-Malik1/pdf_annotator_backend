@@ -55,3 +55,25 @@ export const deleteHighlight = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+export const updateHighlight = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { text, boundingBox, pageNumber } = req.body;
+
+    const highlight = await Highlight.findOneAndUpdate(
+      { _id: id, userId: req.user.id }, // ensure ownership
+      { text, boundingBox, pageNumber },
+      { new: true }
+    );
+
+    if (!highlight) {
+      return res.status(404).json({ message: "Highlight not found or not authorized" });
+    }
+
+    res.json({ message: "Highlight updated successfully", highlight });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

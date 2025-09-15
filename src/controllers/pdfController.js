@@ -1,4 +1,8 @@
 import PDF from '../models/PDF.js';
+import fs from "fs";
+import path from "path";
+
+
 export const upload_pdf= async (req,res)=>{
     try {
     const file = req.file;
@@ -30,3 +34,49 @@ export const get_pdfs= async(req,res)=>{
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+
+export const renamePdf = async (req, res) => {
+  try {
+    const { uuid } = req.params;
+    const { newName } = req.body;
+
+    const pdf = await Pdf.findOneAndUpdate(
+      { uuid, userId: req.user.id }, // ensure ownership
+      { originalName: newName },
+      { new: true }
+    );
+
+    if (!pdf) {
+      return res.status(404).json({ message: "PDF not found or not authorized" });
+    }
+
+    res.json({ message: "PDF renamed successfully", pdf });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
+export const deletePdf = async (req, res) => {
+  try {
+    const { uuid } = req.params;
+
+    const pdf = await Pdf.findOneAndDelete({ uuid, userId: req.user.id });
+    if (!pdf) {
+      return res.status(404).json({ message: "PDF not found or not authorized" });
+    }
+
+    // Remove file from uploads folder
+    const filePath = path.join("src", "uploads", pdf.storedName);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    res.json({ message: "PDF deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
