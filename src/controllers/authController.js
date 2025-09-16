@@ -16,9 +16,20 @@ export const registerUser = async (req, res) => {
     // save new user
     const user = new User({ email, password: hashedPassword });
     await user.save();
-
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (err) {
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+    });
+  } 
+  catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
@@ -42,7 +53,13 @@ export const loginUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
