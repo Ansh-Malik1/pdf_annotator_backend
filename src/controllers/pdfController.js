@@ -1,7 +1,7 @@
 import PDF from '../models/PDF.js';
 import fs from "fs";
 import path from "path";
-
+import mongoose from "mongoose";
 
 export const upload_pdf= async (req,res)=>{
     try {
@@ -25,14 +25,28 @@ export const upload_pdf= async (req,res)=>{
 }
 
 export const get_pdfs= async(req,res)=>{
-    try {
-    const pdfs = await PDF.find({ user: req.user.id });
-    res.json(pdfs);
-    } 
-    catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+  try {
+    const userIdStr = req.user.id.trim();
+
+    if (!mongoose.Types.ObjectId.isValid(userIdStr)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
     }
+
+    const userId = new mongoose.Types.ObjectId(userIdStr);
+
+    console.log('Querying PDFs for user:', userId);
+
+    const pdfs = await PDF.find({ user: userId });
+
+    console.log('PDFs found:', pdfs);
+
+    return res.json(pdfs);
+  } 
+  catch (err) {
+      console.error('Error fetching PDFs:', err); // log full error
+      return res.status(500).json({ error: 'Server error fetching PDFs', details: err.message });
+  }
+
 }
 
 
