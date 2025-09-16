@@ -55,7 +55,7 @@ export const renamePdf = async (req, res) => {
     const { uuid } = req.params;
     const { newName } = req.body;
 
-    const pdf = await Pdf.findOneAndUpdate(
+    const pdf = await PDF.findOneAndUpdate(
       { uuid, userId: req.user.id }, // ensure ownership
       { originalName: newName },
       { new: true }
@@ -78,7 +78,7 @@ export const deletePdf = async (req, res) => {
   try {
     const { uuid } = req.params;
 
-    const pdf = await Pdf.findOneAndDelete({ uuid, userId: req.user.id });
+    const pdf = await PDF.findOneAndDelete({ uuid, userId: req.user.id });
     if (!pdf) {
       return res.status(404).json({ message: "PDF not found or not authorized" });
     }
